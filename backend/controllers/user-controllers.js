@@ -8,6 +8,8 @@ exports.signup = (req, res, next) => {
 
     .then((hash) => {
       const user = new User({
+        lastname: req.body.lastname,
+        firstname: req.body.firstname,
         email: req.body.email,
         password: hash,
       });
@@ -47,9 +49,21 @@ exports.login = (req, res, next) => {
             token: jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
               expiresIn: "24h",
             }),
+            lastname: user.lastname,
+            firstname: user.firstname
           });
         })
         .catch((error) => res.status(500).json(error));
     })
     .catch((error) => res.status(500).json(error));
+};
+
+exports.getUser = (req, res, next) => {
+  User.findOne({ userId: req.body.userId })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({ error: "Utilisateur non inscrit !" });
+      }
+      return res.status(200).json(user)
+    }).catch((error) => res.status(500).json(error));
 };

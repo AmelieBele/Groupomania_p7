@@ -3,32 +3,42 @@ const fs = require("fs");
 
 // Récupration de touts les posts ...............................................
 exports.getAllPosts = (req, res, next) => {
-  Post.find()
-    .then((posts) => res.status(200).json(posts))
-    .catch((error) => res.status(400).json({ error }));
+  Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "user",
+      },
+    },
+  ]).exec(function (err, posts) {
+    return res.status(200).json({ posts });
+  });
 };
 // Recuperation d'un post ...............................................
 exports.getOnePost = (req, res, next) => {
   Post.findOne({ _id: req.params.id })
     .then((post) => res.status(200).json(post))
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.status(400).json(error));
 };
 
 // Creation d'un post ..................................................
+
 exports.createPost = (req, res, next) => {
-  const postObject = JSON.parse(req.body.post);
-  delete postObject._id;
+  let image = "";
+  if (req.file) {
+    image = `${req.protocol}://${req.get("host")}/images/${req.file.filename}`;
+  }
   const post = new Post({
-    ...postObject,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${
-      req.file.filename
-    }`,
+    userId: req.body.userId,
+    postText: req.body.postText,
+    image: image,
     likes: 0,
-    usersLiked: ["string"],
   });
   post
     .save()
-    .then(() => res.status(201).json({ message: "Post créer !" }))
+    .then(() => res.status(201).json({ message: "Post créé !" }))
     .catch((error) => res.status(400).json({ error }));
 };
 
@@ -50,20 +60,26 @@ exports.modifyPost = (req, res, next) => {
 //Suppression d'un post .....................................................
 exports.deletePost = (req, res, next) => {
   Post.findOne({ _id: req.params.id }).then((post) => {
-    const filename = post.imageUrl.split("/images/"[1]);
-    fs.unlink(`images/${filename}`, () => {
-      Post.deleteOne({ _id: req.params.id })
-        .then(() => {
-          res.status(200).json({
-            message: "Deleted!",
+    Post.deleteOne({ _id: req.params.id })
+      .then(() => {
+        if (post.imageUrl) {
+          const filename = post.imageUrl.split("/images/"[1]);
+          fs.unlink(`images/${filename}`, (err) => {
+            if (err) {
+              throw err;
+            }
           });
-        })
-        .catch((error) => {
-          res.status(400).json({
-            error: error,
-          });
+        }
+
+        res.status(200).json({
+          message: "Deleted!",
         });
-    });
+      })
+      .catch((error) => {
+        res.status(400).json({
+          error: error,
+        });
+      });
   });
 };
 

@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const postsModels = mongoose.Schema({
-  userId: { type: "string", require: true },
+  userId: { type: mongoose.Schema.ObjectId, require: true },
   postText: { type: "string", require: true },
-  imageUrl: { type: "string", require: true },
+  imageUrl: { type: "string" },
   likes: { type: "string", default: 0 },
 });
 
