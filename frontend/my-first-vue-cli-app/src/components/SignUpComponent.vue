@@ -84,7 +84,7 @@ export default {
     validEmail() {
       const emailRegExp = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$");
       const testEmail = emailRegExp.test(this.email);
-
+      
       if (testEmail == false) {
         this.errEmail = "Email Invalide : (exemple@email.com) ";
         return false;

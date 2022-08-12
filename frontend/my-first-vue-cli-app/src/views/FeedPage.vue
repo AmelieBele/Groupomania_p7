@@ -9,17 +9,20 @@
   </div>
 
 </div>  
+  <FooterComponent/>
 </template>
 
 <script>
 
 import NewPostComponent from '../components/NewPostComponent.vue'
 import ListPostComponent from '../components/ListPostComponent.vue'
+import FooterComponent from '../components/FooterComponent.vue'
 export default {
   name: 'FeedPage',
   components: {
     NewPostComponent,
     ListPostComponent,
+    FooterComponent,
   },
   data(){
     return {
@@ -40,6 +43,7 @@ export default {
 <style lang="scss">
 .container {
   background-color: #d5d6db;
+
 
    .button {
       font-size: 20px;

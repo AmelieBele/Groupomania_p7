@@ -56,11 +56,10 @@ export default {
         const responseMiseEnForme = await response.json();
         
         localStorage.setItem("token", (responseMiseEnForme.token))
-        console.log(responseMiseEnForme.userId)
         localStorage.setItem("userId", responseMiseEnForme.userId)
         localStorage.setItem("lastname",(responseMiseEnForme.lastname))
         localStorage.setItem("firstname",(responseMiseEnForme.firstname))
-        console.log(responseMiseEnForme)
+
         this.routerRedirection()
       }
 

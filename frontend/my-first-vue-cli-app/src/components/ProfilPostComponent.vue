@@ -1,7 +1,7 @@
 <template>    
    <div>
     <img src="../assets/profil-picture-groupmania.png" class="profil-picture" alt="photo de profil"/>
-    <p class="user-name">{{username}} <br/></p>
+    <p class="user-name">{{ getUsername }} <br/></p>
 
    </div>
 </template>
@@ -13,7 +13,7 @@ export default {
   component: {
     
   },
-  props: ['username'],
+  props: ['user'],
   data(){
     return {
        
@@ -27,11 +27,8 @@ export default {
   },
 
   computed: {
-    userName(){
-      const lastname = localStorage.getItem('lastname')
-      const firstname = localStorage.getItem('firstname')
-
-      return lastname + ' ' + firstname
+    getUsername(){
+      return this.user.lastname + ' ' + this.user.firstname
     }
   }
 }

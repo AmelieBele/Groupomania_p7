@@ -4,7 +4,7 @@
     <div class="new-post">
       <div class="profil-post">
 
-        <ProfilPostComponent :username="userName"></ProfilPostComponent>
+        <ProfilPostComponent :user="user"></ProfilPostComponent>
 
       </div>  
       <div class="input-img">
@@ -40,24 +40,26 @@ export default {
     
   },
   computed: {
-    userName(){
+    user(){
       const lastname = localStorage.getItem('lastname')
       const firstname = localStorage.getItem('firstname')
 
-      return lastname + ' ' + firstname
+      return {lastname: lastname,  firstname: firstname}
     }
   },
 
   methods : {
     async post(){
+      
       let formData = new FormData();
       const userId = localStorage.getItem("userId")
       formData.append('image', this.image);
       formData.append('userId', userId);
-      formData.append('postText', this.text)
+      const postText = formData.append('postText', this.text)
       const token = localStorage.getItem("token")
-      
-      try {
+
+      if (postText != ''){
+         try {
         const datas = await this.axios.post(`${API_URL}/post`, formData, {
           headers:{
             "Content-Type":"multipart/form-data",
@@ -72,12 +74,13 @@ export default {
         console.log(e)
       }
       this.$router.go()
+      }
+     
     },
     
     setFile(event){
       if (event.target.files){
-      this.image = event.target.files[0]
-      
+        this.image = event.target.files[0]
       }
 
     },

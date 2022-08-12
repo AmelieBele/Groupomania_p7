@@ -33,7 +33,7 @@ exports.createPost = (req, res, next) => {
   const post = new Post({
     userId: req.body.userId,
     postText: req.body.postText,
-    image: image,
+    imageUrl: image,
     likes: 0,
   });
   post
@@ -46,11 +46,10 @@ exports.createPost = (req, res, next) => {
 exports.modifyPost = (req, res, next) => {
   const postObject = req.file
     ? {
-        ...JSON.parse(req.body.post),
-        imageUrl: `${req.protocol}://${req.get("host")}/images/${
-          req.file.filename
-        }`,
+        postText: req.body.postText,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
       }
+      
     : { ...req.body };
   Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: "Post modifié !" }))
@@ -63,7 +62,8 @@ exports.deletePost = (req, res, next) => {
     Post.deleteOne({ _id: req.params.id })
       .then(() => {
         if (post.imageUrl) {
-          const filename = post.imageUrl.split("/images/"[1]);
+          const filename = post.imageUrl.split("/images/")[1];
+
           fs.unlink(`images/${filename}`, (err) => {
             if (err) {
               throw err;
@@ -84,12 +84,14 @@ exports.deletePost = (req, res, next) => {
 };
 
 exports.likePost = (req, res, next) => {
+
   Post.findOne({ _id: req.params.id })
     .then((post) => {
       if (req.body.like == 1) {
         post.usersLiked.push(req.body.userId);
         post.likes += req.body.like;
       }
+      console.log(post)
       if (
         post.usersLiked.indexOf(req.body.userId) != -1 &&
         req.body.like == 0
@@ -105,3 +107,32 @@ exports.likePost = (req, res, next) => {
     })
     .catch((error) => res.status(500).json({ error }));
 };
+
+exports.unLikePost = (req, res, next) => {
+
+  Post.findOne({ _id: req.params.id })
+    .then((post) => {
+      if (req.body.like == 1) {
+        const index = post.usersLiked.indexOf(req.body.userId)
+        if(index > -1) {
+          post.usersLiked.splice(index, 1)
+        }
+        post.likes -= req.body.like;
+      }
+      console.log(post)
+      if (
+        post.usersLiked.indexOf(req.body.userId) != -1 &&
+        req.body.like == 0
+      ) {
+        const likesIndex = post.usersLiked.findIndex(
+          (user) => user === req.body.userId
+        );
+        post.usersLiked.splice(likesIndex, 1);
+        post.likes -= 1;
+      }
+      post.save();
+      res.status(201).json({ message: "Avis modifié !" });
+    })
+    .catch((error) => res.status(500).json({ error }));
+};
+

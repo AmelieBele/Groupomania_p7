@@ -22,10 +22,12 @@ exports.signup = (req, res, next) => {
             .status(201)
             .json({ message: "Création de l'utilisateur réussie !" })
         )
-        .catch((error) => res.status(400).json(error));
+        .catch((error) =>
+          res.status(400).json((error = " Erreur création utilisateur"))
+        );
     })
 
-    .catch((error) => res.status(500).json({ error }));
+    .catch((error) => res.status(500).json((error = " Erreur signup")));
 };
 
 exports.login = (req, res, next) => {
@@ -50,20 +52,25 @@ exports.login = (req, res, next) => {
               expiresIn: "24h",
             }),
             lastname: user.lastname,
-            firstname: user.firstname
+            firstname: user.firstname,
           });
         })
-        .catch((error) => res.status(500).json(error));
+        .catch((error) =>
+          res.status(500).json((error = " Erreur vaidation email/mot de passe"))
+        );
     })
-    .catch((error) => res.status(500).json(error));
+    .catch((error) => res.status(500).json((error = "Erreur login")));
 };
 
 exports.getUser = (req, res, next) => {
-  User.findOne({ userId: req.body.userId })
+  User.findOne({ _id: req.params.id })
     .then((user) => {
       if (!user) {
         return res.status(401).json({ error: "Utilisateur non inscrit !" });
       }
-      return res.status(200).json(user)
-    }).catch((error) => res.status(500).json(error));
+      return res.status(200).json(user);
+    })
+    .catch((error) =>
+      res.status(500).json((error = "Erreur recupération user"))
+    );
 };

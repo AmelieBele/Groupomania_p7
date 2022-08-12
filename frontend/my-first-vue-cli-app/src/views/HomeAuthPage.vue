@@ -11,22 +11,23 @@
          <SignInComponent v-if = "component == 'signin'"></SignInComponent>
          <SignUpComponent v-else @switch="switchTab"></SignUpComponent>
     </div>
- 
-
 </div>  
+  <FooterComponent/>
 </template>
 
 <script>
 import QuoteComponent from "../components/QuoteComponent.vue"
 import SignInComponent from "../components/SignInComponent.vue"
 import SignUpComponent from "../components/SignUpComponent.vue"
+import FooterComponent from "../components/FooterComponent.vue"
 
 export default {
   name: 'HomeAuthPage',
   components: {
     SignUpComponent,
     SignInComponent,
-    QuoteComponent
+    QuoteComponent, 
+    FooterComponent
   },
   data(){
     return {
@@ -59,6 +60,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-around;
+ 
 
 
   .button{

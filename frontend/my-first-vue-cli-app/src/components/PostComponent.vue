@@ -1,13 +1,13 @@
 <template>  
     <div class="conteneur">
         <div class="post">
-            <ProfilPostComponent :username="getName"/>
+            <ProfilPostComponent :user="publication.user[0]"/>
             <p class="postText">{{ publication.postText }}</p>
             <img v-if="publication.imageUrl != '' " :src="publication.imageUrl"/>
             <p class="modif/supp">
-                <button type="button" class="modif button">Modifier </button>
-                <button type="button" v-if="isAdmin == true" @click="deletePost(publication._id)" class="supp button"> Supprimer</button>
-                <LikeComponent class="button"/>
+                <button type="button" v-if="isAdmin || isMyPublication" class="modif button" @click="modifyPost()">Modifier</button>
+                <button type="button" v-if="isAdmin || isMyPublication" @click="deletePost(publication._id)" class="supp button"> Supprimer</button>
+                <LikeComponent :likeCount="publication.likes" :isLiked="isLiked" class="button"/>
             </p>
 
             
@@ -22,25 +22,30 @@ import ProfilPostComponent from './ProfilPostComponent.vue'
 import LikeComponent from "./LikeComponent.vue"
 
 export default {
-  name: 'PostComponent',
-  components: {
-    ProfilPostComponent,
-    LikeComponent,
-  },
-  data(){ 
-    return {
-    }
-  },
-    props: [
-        'publication'
-    ],
+    name: 'PostComponent',
+    components: {
+        ProfilPostComponent,
+        LikeComponent,
+    },
+    data(){ 
+        return {
+            isAdmin: false
+        }
+    },
+    props: ['publication'],
     computed:  {
+        isLiked(){
+            return this.publication.usersLiked.includes(this.getConnectedUserId)
+        },
 
+         isMyPublication() {
+            return this.getAuthorId == this.getConnectedUserId
+        },
         getAuthor() {
-            return this.publication.user[0]
+            return this.publication.user[0]       
         }, 
         getName() {
-            const user = this.getAuthor
+            const user = this.publication.user[0]
 
             return user.lastname + ' ' + user.firstname
         }, 
@@ -50,51 +55,59 @@ export default {
         getConnectedUserId() {
             return localStorage.getItem('userId')
         },
+      
     },
     async mounted() {
         const token = localStorage.getItem("token")
-            const userId = this.getConnectedUserId
-            const user = await this.axios.get(`${API_URL}/user/${userId}`, {
-                    headers: {
-                       "Authorization": "Bearer " + token
-                    }
-            })
-            this.isAdmin = user['data']
+        const userId = this.getConnectedUserId
+
+        const user = await this.axios.get(`${API_URL}/user/${userId}`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        })
+
+        this.isAdmin = user['data'].isAdmin
     },
     methods: {
-       
-      deletePost() {
-        const token = localStorage.getItem("token")
-        const id = this.publication._id
-        this.axios.delete(`${API_URL}/post/${id}`, 
-        { headers: {'Authorization': 'Bearer ' + token }})
-        .then(() => alert.success('Post supprimé !'))
-        .catch ((error) => console.log(error.response));
-        this.$router.go()
-      },
-
-        async getTextImg (){
-        
-            try{
-                let formData = new FormData();
-                const id = localStorage.getItem("userId")
-                const token = localStorage.getItem("token")
-                const recuperation = await this.axios.get(`${API_URL}/post/${id}`,formData, {
-                    headers: {
-                       "Authorization": "Bearer " + token
+        modifyPost() {
+            this.$router.push({name: 'modifyPost', params: {idPost: this.publication._id}})
+        },
+        deletePost() {
+            const token = localStorage.getItem("token")
+            const id = this.publication._id
+            this.axios.delete(`${API_URL}/post/${id}`, {
+                 headers: {
+                    'Authorization': 'Bearer ' + token 
                     }
-                })
-                const textTransform = await recuperation.json()
-                formData.append('image', this.image);
-                formData.append('postText', this.text)
-                console.log(textTransform)
-            }catch(e){
-                console.log(e)
-            }
-        }
-    }
+                    }
+                    )
+            .then(() => alert.success('Post supprimé !'))
+            .catch ((error) => console.log(error.response));
+            this.$router.go()
+      },
+      async getTextImg (){
+        try{
+            let formData = new FormData();
+            const id = localStorage.getItem("userId")
+            const token = localStorage.getItem("token")
 
+            const recuperation = await this.axios.get(`${API_URL}/post/${id}`,formData, {
+                headers: {
+                   "Authorization": "Bearer " + token
+                }
+            })
+
+            const textTransform = await recuperation.json()
+            formData.append('image', this.image);
+            formData.append('postText', this.text)
+            console.log(textTransform)
+        }catch(e){
+            console.log(e)
+        }
+        },
     }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -115,6 +128,7 @@ justify-content: center;
             padding-left: 15px;
             padding-top:10px;
             display: flex;
+            font-size: 20px;
 
         }
 

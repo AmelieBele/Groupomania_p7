@@ -1,6 +1,7 @@
 <template>    
-   <PostComponent v-for="post in this.publications" :key="post" :publication="post">
+   <PostComponent v-for="(post, key) in this.publications" :key="key" :publication="post">
    </PostComponent>
+
 </template>
 
 <script>
@@ -16,11 +17,26 @@ export default {
 
   data(){
     return {
-      publications :[]
+      publications :[],
+
     }
   }, 
+  async created() {
+        const token = localStorage.getItem("token")
+        const userId = "62ea7bc4455eb00e513be2b3"
 
-  async created(){
+        console.log(userId)
+
+        const user = await this.axios.get(`${API_URL}/user/${userId}`, {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        })
+
+        console.log(user)
+    },
+
+  async mounted(){
     this.publications = await this.getAllPosts()
   },
 
@@ -54,7 +70,11 @@ export default {
 
 <style lang="scss" scoped>
 
-
+.post{
+  padding-bottom: 50px; 
+  color : #fd2d01;
+  font-size: 20px;
+}
 
 </style>
 
