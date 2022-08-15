@@ -2,7 +2,6 @@
 <div class="footer">
   <p>Groupomania © 2022</p>
   <a class="contact" href="#">Nous contacter</a>
-
 </div>  
 </template>
 
@@ -10,12 +9,8 @@
 
 export default {
   name: 'FooterComponent',
-  components: {
-
-  }
 }
 </script>
-
 
 <style lang="scss" scoped>
   .footer{

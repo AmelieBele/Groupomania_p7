@@ -1,11 +1,10 @@
-const User = require("../models/user-models");
+const User = require("../models/userModels");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 exports.signup = (req, res, next) => {
   bcrypt
     .hash(req.body.password, 10)
-
     .then((hash) => {
       const user = new User({
         lastname: req.body.lastname,
@@ -13,8 +12,6 @@ exports.signup = (req, res, next) => {
         email: req.body.email,
         password: hash,
       });
-
-      console.log(user);
       user
         .save()
         .then(() =>
@@ -26,7 +23,6 @@ exports.signup = (req, res, next) => {
           res.status(400).json((error = " Erreur création utilisateur"))
         );
     })
-
     .catch((error) => res.status(500).json((error = " Erreur signup")));
 };
 
@@ -36,16 +32,13 @@ exports.login = (req, res, next) => {
       if (!user) {
         return res.status(401).json({ error: "Utilisateur non inscrit !" });
       }
-
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {
           if (!valid) {
             return res.status(401).json({ error: "Mot de passe incorrect !" });
           }
-
           const userId = user._id.toString();
-
           res.status(200).json({
             userId: userId,
             token: jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {

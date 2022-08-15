@@ -1,4 +1,4 @@
-const Post = require("../models/posts-models");
+const Post = require("../models/postsModels");
 const fs = require("fs");
 
 // Récupration de touts les posts ...............................................
@@ -47,9 +47,10 @@ exports.modifyPost = (req, res, next) => {
   const postObject = req.file
     ? {
         postText: req.body.postText,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
       }
-      
     : { ...req.body };
   Post.updateOne({ _id: req.params.id }, { ...postObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: "Post modifié !" }))
@@ -70,7 +71,6 @@ exports.deletePost = (req, res, next) => {
             }
           });
         }
-
         res.status(200).json({
           message: "Deleted!",
         });
@@ -84,14 +84,12 @@ exports.deletePost = (req, res, next) => {
 };
 
 exports.likePost = (req, res, next) => {
-
   Post.findOne({ _id: req.params.id })
     .then((post) => {
       if (req.body.like == 1) {
         post.usersLiked.push(req.body.userId);
         post.likes += req.body.like;
       }
-      console.log(post)
       if (
         post.usersLiked.indexOf(req.body.userId) != -1 &&
         req.body.like == 0
@@ -109,17 +107,15 @@ exports.likePost = (req, res, next) => {
 };
 
 exports.unLikePost = (req, res, next) => {
-
   Post.findOne({ _id: req.params.id })
     .then((post) => {
       if (req.body.like == 1) {
-        const index = post.usersLiked.indexOf(req.body.userId)
-        if(index > -1) {
-          post.usersLiked.splice(index, 1)
+        const index = post.usersLiked.indexOf(req.body.userId);
+        if (index > -1) {
+          post.usersLiked.splice(index, 1);
         }
         post.likes -= req.body.like;
       }
-      console.log(post)
       if (
         post.usersLiked.indexOf(req.body.userId) != -1 &&
         req.body.like == 0
@@ -135,4 +131,3 @@ exports.unLikePost = (req, res, next) => {
     })
     .catch((error) => res.status(500).json({ error }));
 };
-

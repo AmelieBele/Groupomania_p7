@@ -1,8 +1,7 @@
 <template>    
    <div>
-    <img src="../assets/profil-picture-groupmania.png" class="profil-picture" alt="photo de profil"/>
+    <img src="../assets/profil-picture-groupmania.png" class="profil-picture" alt="Photo de profil"/>
     <p class="user-name">{{ getUsername }} <br/></p>
-
    </div>
 </template>
 
@@ -10,22 +9,8 @@
 
 export default {
   name: 'PostProfilComponent',
-  component: {
-    
-  },
-  props: ['user'],
-  data(){
-    return {
-       
 
-
-    }
-  }, 
-  methods: {
-
-
-  },
-
+  props: ['user'], 
   computed: {
     getUsername(){
       return this.user.lastname + ' ' + this.user.firstname

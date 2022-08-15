@@ -1,8 +1,7 @@
-
 <template>
   <div class="all">
     <textarea v-model="text"></textarea>
-    <img v-if="image" :src="imagePreview"/>
+    <img v-if="image" :src="imagePreview" alt="Image du post"/>
     <input  class ="file" type="file" name="image" @change="setFile"/>
     <button class="button" @click="modifyPost">Modifier ma publication !</button>
   </div>
@@ -10,38 +9,28 @@
  
 <script>
 import {API_URL} from "./../../common/utils"
-
 export default {
   name: 'EditPostPage',
- 
   data(){
     return{
       text:"",
       image:"",
       imagePreview:"",
     }
-  
   },
 async mounted() {
-  
-        const token = localStorage.getItem("token")
-        const idPost = this.$route.params.idPost
-        
-
-   const publication = await this.axios.get(`${API_URL}/post/${idPost}`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-
-        this.text = publication['data'].postText
-        this.imagePreview = publication['data'].imageUrl
-        console.log(this.image)
-
+  const token = localStorage.getItem("token")
+  const idPost = this.$route.params.idPost
+  const publication = await this.axios.get(`${API_URL}/post/${idPost}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  this.text = publication['data'].postText
+  this.imagePreview = publication['data'].imageUrl
 },
 
   methods : {
-
     modifyPost() {
       const idPost = this.$route.params.idPost
       const token = localStorage.getItem("token")
@@ -50,7 +39,6 @@ async mounted() {
       formData.append("image", this.image);
       formData.append("postText", this.text);
       formData.append('userId', userId);
-
       this.axios.put(`${API_URL}/post/${idPost}`, formData, {
           headers: { Authorization: "Bearer " + token },
         })
@@ -63,15 +51,11 @@ async mounted() {
       if (event.target.files){
         this.image = event.target.files[0]
         this.imagePreview = URL.createObjectURL(this.image)
-        console.log(event.target.files[0])
       }
-
-    },
-
+    }
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
   .all{

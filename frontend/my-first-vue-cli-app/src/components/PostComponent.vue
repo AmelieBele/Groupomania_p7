@@ -3,24 +3,20 @@
         <div class="post">
             <ProfilPostComponent :user="publication.user[0]"/>
             <p class="postText">{{ publication.postText }}</p>
-            <img v-if="publication.imageUrl != '' " :src="publication.imageUrl"/>
+            <img v-if="publication.imageUrl != '' " :src="publication.imageUrl" alt="Image du post"/>
             <p class="modif/supp">
                 <button type="button" v-if="isAdmin || isMyPublication" class="modif button" @click="modifyPost()">Modifier</button>
                 <button type="button" v-if="isAdmin || isMyPublication" @click="deletePost(publication._id)" class="supp button"> Supprimer</button>
                 <LikeComponent :likeCount="publication.likes" :isLiked="isLiked" class="button"/>
-            </p>
-
-            
+            </p>  
         </div>
     </div>
 </template>
 
 <script>
-
 import {API_URL} from "./../../common/utils"
 import ProfilPostComponent from './ProfilPostComponent.vue'
 import LikeComponent from "./LikeComponent.vue"
-
 export default {
     name: 'PostComponent',
     components: {
@@ -35,6 +31,7 @@ export default {
     props: ['publication'],
     computed:  {
         isLiked(){
+            console.log(this.publication)
             return this.publication.usersLiked.includes(this.getConnectedUserId)
         },
 
@@ -54,8 +51,7 @@ export default {
         }, 
         getConnectedUserId() {
             return localStorage.getItem('userId')
-        },
-      
+        },    
     },
     async mounted() {
         const token = localStorage.getItem("token")
@@ -66,7 +62,6 @@ export default {
                 "Authorization": "Bearer " + token
             }
         })
-
         this.isAdmin = user['data'].isAdmin
     },
     methods: {
@@ -77,34 +72,32 @@ export default {
             const token = localStorage.getItem("token")
             const id = this.publication._id
             this.axios.delete(`${API_URL}/post/${id}`, {
-                 headers: {
+                headers: {
                     'Authorization': 'Bearer ' + token 
                     }
-                    }
-                    )
+            })
             .then(() => alert.success('Post supprimé !'))
             .catch ((error) => console.log(error.response));
             this.$router.go()
       },
       async getTextImg (){
-        try{
-            let formData = new FormData();
-            const id = localStorage.getItem("userId")
-            const token = localStorage.getItem("token")
+            try{
+                let formData = new FormData();
+                const id = localStorage.getItem("userId")
+                const token = localStorage.getItem("token")
+                const recuperation = await this.axios.get(`${API_URL}/post/${id}`,formData, {
+                    headers: {
+                    "Authorization": "Bearer " + token
+                    }
+                })
 
-            const recuperation = await this.axios.get(`${API_URL}/post/${id}`,formData, {
-                headers: {
-                   "Authorization": "Bearer " + token
-                }
-            })
+                await recuperation.json()
+                formData.append('image', this.image);
+                formData.append('postText', this.text)
 
-            const textTransform = await recuperation.json()
-            formData.append('image', this.image);
-            formData.append('postText', this.text)
-            console.log(textTransform)
-        }catch(e){
-            console.log(e)
-        }
+            }catch(e){
+                console.log(e)
+            }
         },
     }
 }
@@ -129,7 +122,6 @@ justify-content: center;
             padding-top:10px;
             display: flex;
             font-size: 20px;
-
         }
 
         img{

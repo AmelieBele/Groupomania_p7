@@ -1,39 +1,29 @@
 <template>    
-   <PostComponent v-for="(post, key) in this.publications" :key="key" :publication="post">
-   </PostComponent>
-
+   <PostComponent v-for="(post, key) in this.publications" :key="key" :publication="post"/>
 </template>
 
 <script>
 
 import {API_URL} from "./../../common/utils"
 import PostComponent from "./PostComponent.vue"
-
 export default {
   name: 'ListPostComponent',
   components: {
     PostComponent,
   },
-
   data(){
     return {
       publications :[],
-
     }
   }, 
   async created() {
         const token = localStorage.getItem("token")
         const userId = "62ea7bc4455eb00e513be2b3"
-
-        console.log(userId)
-
-        const user = await this.axios.get(`${API_URL}/user/${userId}`, {
+        await this.axios.get(`${API_URL}/user/${userId}`, {
             headers: {
                 "Authorization": "Bearer " + token
             }
         })
-
-        console.log(user)
     },
 
   async mounted(){
@@ -61,10 +51,8 @@ export default {
       }catch(e) {
         console.log(e)
       }
-     
     }
   }
-
 }
 </script>
 

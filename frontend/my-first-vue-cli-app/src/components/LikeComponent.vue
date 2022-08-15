@@ -1,5 +1,3 @@
-//.............................LIKE...................................
-
 <template>
   <button v-if="!liked" @click="likePost" type="button" class="likeButton"><i :class="{liked : isLiked}" class="fa-solid fa-heart"></i></button>
   {{ likeCount }}
@@ -7,18 +5,12 @@
 
 <script>
 import {API_URL} from "./../../common/utils"
-
 export default {
   name: 'LikeComponent',
-  components: {
-
-  },
   data(){
      return {
         like: [],
         liked: null ,
-        
-
       }
   },
   props: [
@@ -30,7 +22,6 @@ export default {
 
     async LikePostId(){
       const id = this.publication._id
-
       const like = await this.axios.post(`${API_URL}/post/${id}/like`)
       const likesJson = await like.json()
       likesJson.forEach(like => {
@@ -45,7 +36,6 @@ export default {
         userId: this.$parent.getConnectedUserId,
         postId:this.$parent.publication._id
       }
-
       const token = localStorage.getItem("token")
       if(!this.isLiked){
         this.axios.post(`${API_URL}/post/${this.$parent.publication._id}/like`, {like: data.like, userId: data.userId}, {
@@ -71,9 +61,6 @@ export default {
         this.liked= false
         this.$router.go()
       }
-      console.log(this.isLiked)
- 
-
     }
   }
 }
