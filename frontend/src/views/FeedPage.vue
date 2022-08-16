@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <button type="button" @click="Logout()" class="déconnexion button">Me déconnecter</button>
+    <button type="button" aria-label="Me déconnecter" @click="Logout()" class="déconnexion button">Me déconnecter</button>
     <div class="newPost">
         <NewPostComponent/>
     </div>

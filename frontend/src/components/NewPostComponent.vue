@@ -10,7 +10,7 @@
         <input  class ="file" type="file" name="image" @change="setFile"/>
       </div>
       <div>
-        <button class="button" type="submit" name="publier" @click="post">Publier</button>
+        <button aria-label="Publier mon post" class="button" type="submit" name="publier" @click="post">Publier</button>
       </div>
     </div>
   </div>

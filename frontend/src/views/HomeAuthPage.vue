@@ -5,8 +5,8 @@
       </div>
       <p v-if="showSuccess">Inscription réussie !</p>
       <div class="form">
-        <button type="button" @click="changeComponent('signin')" class="signin-button button">Se connecter</button>
-        <button type="button" @click="changeComponent('signup')" class="signup-button button">S'inscrire</button>       
+        <button type="button" aria-label="Me connecter" @click="changeComponent('signin')" class="signin-button button">Se connecter</button>
+        <button type="button" aria-label="M'inscrire" @click="changeComponent('signup')" class="signup-button button">S'inscrire</button>       
         <SignInComponent v-if = "component == 'signin'"/>
         <SignUpComponent v-else @switch="switchTab"/>
       </div>

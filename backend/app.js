@@ -4,7 +4,7 @@ const path = require("path");
 const cors = require("cors");
 
 
-const postsRoutes = require("./routes/postsRoutes");
+const postsRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
 
 

@@ -5,9 +5,9 @@
             <p class="postText">{{ publication.postText }}</p>
             <img v-if="publication.imageUrl != '' " :src="publication.imageUrl" alt="Image du post"/>
             <p class="modif/supp">
-                <button type="button" v-if="isAdmin || isMyPublication" class="modif button" @click="modifyPost()">Modifier</button>
-                <button type="button" v-if="isAdmin || isMyPublication" @click="deletePost(publication._id)" class="supp button"> Supprimer</button>
-                <LikeComponent :likeCount="publication.likes" :isLiked="isLiked" class="button"/>
+                <button type="button" aria-label="Modifier mon post" v-if="isAdmin || isMyPublication" class="modif button" @click="modifyPost()">Modifier</button>
+                <button type="button" aria-label="Supprimer mon post" v-if="isAdmin || isMyPublication" @click="deletePost(publication._id)" class="supp button"> Supprimer</button>
+                <LikeComponent :likeCount="publication.likes" :isLiked="isLiked" :postId="publication._id" />
             </p>  
         </div>
     </div>
@@ -23,15 +23,10 @@ export default {
         ProfilPostComponent,
         LikeComponent,
     },
-    data(){ 
-        return {
-            isAdmin: false
-        }
-    },
-    props: ['publication'],
+ 
+    props: ['publication', 'isAdmin'],
     computed:  {
         isLiked(){
-            console.log(this.publication)
             return this.publication.usersLiked.includes(this.getConnectedUserId)
         },
 
@@ -52,17 +47,6 @@ export default {
         getConnectedUserId() {
             return localStorage.getItem('userId')
         },    
-    },
-    async mounted() {
-        const token = localStorage.getItem("token")
-        const userId = this.getConnectedUserId
-
-        const user = await this.axios.get(`${API_URL}/user/${userId}`, {
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        })
-        this.isAdmin = user['data'].isAdmin
     },
     methods: {
         modifyPost() {

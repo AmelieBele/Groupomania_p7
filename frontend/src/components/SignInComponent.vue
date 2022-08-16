@@ -9,7 +9,7 @@
        <input type="password" name="password" placeholder="Mot de passe" v-model="password" require>
       </div>
       <p>{{ errMsg }}</p>
-      <button class="button" type="submit" @click.prevent="connexion" :disabled="!email">Connexion</button>
+      <button class="button" aria-label="Me connecter" type="submit" @click.prevent="connexion" :disabled="!email">Connexion</button>
   </form>
 </div>  
 </template>

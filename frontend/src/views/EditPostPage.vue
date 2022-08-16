@@ -3,7 +3,7 @@
     <textarea v-model="text"></textarea>
     <img v-if="image" :src="imagePreview" alt="Image du post"/>
     <input  class ="file" type="file" name="image" @change="setFile"/>
-    <button class="button" @click="modifyPost">Modifier ma publication !</button>
+    <button class="button" aria-label="Valider la modification de ma publication" @click="modifyPost">Modifier ma publication !</button>
   </div>
 </template>
  
@@ -89,6 +89,15 @@ async mounted() {
       background-color: #4e5166; 
       color: white;
     }
+  }
+
+  @media only screen and (max-width: 768px){
+    div.all{
+      .button{
+      width:40%;
+    }
+    }
+    
   }
   
 </style>

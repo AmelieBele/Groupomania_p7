@@ -1,5 +1,5 @@
 <template>    
-   <PostComponent v-for="(post, key) in this.publications" :key="key" :publication="post"/>
+   <PostComponent :isAdmin='isAdmin' v-for="(post, key) in this.publications" :key="key" :publication="post"/>
 </template>
 
 <script>
@@ -14,16 +14,18 @@ export default {
   data(){
     return {
       publications :[],
+      isAdmin: false,
     }
   }, 
   async created() {
         const token = localStorage.getItem("token")
-        const userId = "62ea7bc4455eb00e513be2b3"
-        await this.axios.get(`${API_URL}/user/${userId}`, {
+        const userId =localStorage.getItem("userId")
+        const user = await this.axios.get(`${API_URL}/user/${userId}`, {
             headers: {
                 "Authorization": "Bearer " + token
-            }
+             }
         })
+        this.isAdmin = user['data'].isAdmin
     },
 
   async mounted(){

@@ -18,7 +18,7 @@
       <input type="password" name="password" placeholder="Mot de passe" v-model="password" required @change="validPassword">
       <p class="error">{{ errPassword }}</p>     
     </div>
-    <button class="button" type="submit" @click.prevent="submit" :disabled="!email || !password">Valider l'inscription</button>
+    <button class="button" aria-label="M'inscrire" type="submit" @click.prevent="submit" :disabled="!email || !password">Valider l'inscription</button>
   </form>
 </div>  
 </template>

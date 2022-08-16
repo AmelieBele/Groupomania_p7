@@ -1,4 +1,4 @@
-const Post = require("../models/postsModels");
+const Post = require("../models/postModels");
 const fs = require("fs");
 
 // Récupration de touts les posts ...............................................
@@ -64,12 +64,15 @@ exports.deletePost = (req, res, next) => {
       .then(() => {
         if (post.imageUrl) {
           const filename = post.imageUrl.split("/images/")[1];
-
-          fs.unlink(`images/${filename}`, (err) => {
-            if (err) {
-              throw err;
-            }
-          });
+          const imagePath = `images/${filename}`
+          if(fs.existsSync(imagePath)) {
+            fs.unlink(imagePath, (err) => {
+              if (err) {
+                throw err;
+              }
+            });
+          }
+          
         }
         res.status(200).json({
           message: "Deleted!",
@@ -106,28 +109,3 @@ exports.likePost = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-exports.unLikePost = (req, res, next) => {
-  Post.findOne({ _id: req.params.id })
-    .then((post) => {
-      if (req.body.like == 1) {
-        const index = post.usersLiked.indexOf(req.body.userId);
-        if (index > -1) {
-          post.usersLiked.splice(index, 1);
-        }
-        post.likes -= req.body.like;
-      }
-      if (
-        post.usersLiked.indexOf(req.body.userId) != -1 &&
-        req.body.like == 0
-      ) {
-        const likesIndex = post.usersLiked.findIndex(
-          (user) => user === req.body.userId
-        );
-        post.usersLiked.splice(likesIndex, 1);
-        post.likes -= 1;
-      }
-      post.save();
-      res.status(201).json({ message: "Avis modifié !" });
-    })
-    .catch((error) => res.status(500).json({ error }));
-};
